@@ -4,9 +4,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
-import trade.wayruha.hyperliquid.dto.request.PerpetualsMetadataRequest;
+import trade.wayruha.hyperliquid.dto.request.PublicDataRequest;
 
-public interface MetadataEndpoints {
+public interface PublicEndpoints {
   @POST("info")
-  Call<JsonNode> getPerpetualsMetadata(@Body PerpetualsMetadataRequest request);
+  Call<JsonNode> getPublicInfo(@Body PublicDataRequest request);
+
 }

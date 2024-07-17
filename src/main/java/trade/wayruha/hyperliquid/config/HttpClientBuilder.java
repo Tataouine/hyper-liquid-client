@@ -4,9 +4,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import org.jetbrains.annotations.NotNull;
 import trade.wayruha.hyperliquid.HyperLiquidConfig;
-import java.util.concurrent.TimeUnit;
 
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import java.util.concurrent.TimeUnit;
 
 public class HttpClientBuilder {
   private final HyperLiquidConfig config;
