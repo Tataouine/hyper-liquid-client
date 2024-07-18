@@ -94,7 +94,7 @@ public abstract class Subscription {
     String user;
 
     public UserEvents(String user) {
-      super("user");
+      super("userEvents");
       this.user = user;
     }
   }
