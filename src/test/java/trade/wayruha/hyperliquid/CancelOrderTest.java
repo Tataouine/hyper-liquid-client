@@ -11,13 +11,13 @@ public class CancelOrderTest {
 
   public static void main(String[] args) {
     //testOrderCancellation
-    final String walletAddress = "";
+    final String walletPrivateKey = "";
     final String orderId = "";
-    final HyperLiquidConfig config = new HyperLiquidConfig();
+    final HyperLiquidConfig config = new HyperLiquidConfig(null, walletPrivateKey);
     final ExchangeService service = new ExchangeService(config);
     final CancelOrderAction cancelOrderAction = new CancelOrderAction();
     cancelOrderAction.addCancel(1, Long.parseLong(orderId));
-    List<CancellationStatus> resp = service.cancelOrder(cancelOrderAction, walletAddress);
+    List<CancellationStatus> resp = service.cancelOrder(cancelOrderAction);
     System.out.println(resp);
   }
 }

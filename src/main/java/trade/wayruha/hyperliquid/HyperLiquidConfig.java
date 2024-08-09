@@ -11,6 +11,13 @@ import static trade.wayruha.hyperliquid.config.Constant.HTTP_CLIENT_TIMEOUT_MS;
 public class HyperLiquidConfig {
   private String host = "https://api.hyperliquid.xyz/"; // replace with the actual host
   private String webSocketHost = "wss://api.hyperliquid.xyz/ws"; // replace with the actual WebSocket host
+  private String privateKey;
+  private String publicKey;
+
+  public HyperLiquidConfig(String publicKey, String privateKey) {
+    this.publicKey = publicKey;
+    this.privateKey = privateKey;
+  }
 
   /**
    * Host connection timeout.

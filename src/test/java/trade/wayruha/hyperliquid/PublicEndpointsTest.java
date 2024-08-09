@@ -13,19 +13,18 @@ public class PublicEndpointsTest {
 
   private static void testAccountSummary(){
     final String walletAddress = "";
-    final HyperLiquidConfig config = new HyperLiquidConfig();
+    final HyperLiquidConfig config = new HyperLiquidConfig(walletAddress, null);
     final AccountService service = new AccountService(config);
-    final PerpAccountSummary resp = service.getPerpAccountSummary(walletAddress);
+    final PerpAccountSummary resp = service.getPerpAccountSummary();
     System.out.println(resp);
   }
 
   private static void testOrderStatus(){
     final String walletAddress = "";
-    final String oId = "";
-    final long orderId = Long.parseLong(oId);
-    final HyperLiquidConfig config = new HyperLiquidConfig();
+    final long orderId = Long.parseLong("31226385612");
+		final HyperLiquidConfig config = new HyperLiquidConfig(walletAddress, null);
     final AccountService service = new AccountService(config);
-    final OrderStatusResponse resp = service.getOrderStatus(walletAddress, orderId);
+    final OrderStatusResponse resp = service.getOrderStatus(orderId);
     System.out.println(resp);
   }
 }

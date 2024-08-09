@@ -15,9 +15,9 @@ import java.util.List;
 import java.util.Set;
 
 public class WebSocketTest {
-  static final HyperLiquidConfig config = new HyperLiquidConfig();
+  final static String walletAddress = "";
+  static final HyperLiquidConfig config = new HyperLiquidConfig(walletAddress, null);
   static final WebSocketClientFactory factory = new WebSocketClientFactory(config);
-  static final String walletAddress = "";
 
   @SneakyThrows
   public static void main(String[] args) {

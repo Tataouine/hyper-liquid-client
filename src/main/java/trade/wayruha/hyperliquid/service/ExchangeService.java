@@ -29,12 +29,12 @@ public class ExchangeService extends ServiceBase {
   }
 
   @SneakyThrows
-  public List<OrderResponseDetails> placeOrder(PlaceOrderAction placeOrderAction, String walletAddress) {
+  public List<OrderResponseDetails> placeOrder(PlaceOrderAction placeOrderAction) {
     long nonce = System.currentTimeMillis();
     final LinkedHashMap<String, Object> payloadFieldsMap = getObjectMapper().convertValue(placeOrderAction, LinkedHashMap.class);
     final EthereumSignature ethereumSignature = TransactionSignatureUtil.signStandardL1Action(
         payloadFieldsMap,
-        walletAddress,
+        this.client.getConfig().getPrivateKey(),
         nonce,
         true);
     final ExchangeRequest input = new ExchangeRequest(placeOrderAction, nonce, ethereumSignature);
@@ -45,12 +45,12 @@ public class ExchangeService extends ServiceBase {
   }
 
   @SneakyThrows
-  public List<CancellationStatus> cancelOrder(CancelOrderAction cancelOrderAction, String walletAddress) {
+  public List<CancellationStatus> cancelOrder(CancelOrderAction cancelOrderAction) {
     long nonce = System.currentTimeMillis();
     final LinkedHashMap<String, Object> payloadFieldsMap = getObjectMapper().convertValue(cancelOrderAction, LinkedHashMap.class);
     final EthereumSignature ethereumSignature = TransactionSignatureUtil.signStandardL1Action(
         payloadFieldsMap,
-        walletAddress,
+        this.client.getConfig().getPrivateKey(),
         nonce,
         true);
     final ExchangeRequest input = new ExchangeRequest(cancelOrderAction, nonce, ethereumSignature);

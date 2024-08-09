@@ -17,15 +17,15 @@ public class AccountService extends ServiceBase {
   }
 
   @SneakyThrows
-  public PerpAccountSummary getPerpAccountSummary(String walletAddress) {
-    final PublicDataRequest input = PublicDataRequest.accountSummary(walletAddress);
+  public PerpAccountSummary getPerpAccountSummary() {
+    final PublicDataRequest input = PublicDataRequest.accountSummary(this.client.getConfig().getPublicKey());
     final JsonNode node = client.executeSync(api.getPublicInfo(input));
     return getObjectMapper().treeToValue(node, PerpAccountSummary.class);
   }
 
   @SneakyThrows
-  public OrderStatusResponse getOrderStatus(String walletAddress, long orderId) {
-    final PublicDataRequest input = PublicDataRequest.orderStatus(walletAddress, orderId);
+  public OrderStatusResponse getOrderStatus(long orderId) {
+    final PublicDataRequest input = PublicDataRequest.orderStatus(this.client.getConfig().getPublicKey(), orderId);
     final JsonNode node = client.executeSync(api.getPublicInfo(input));
     return getObjectMapper().treeToValue(node.get("order"), OrderStatusResponse.class);
   }
