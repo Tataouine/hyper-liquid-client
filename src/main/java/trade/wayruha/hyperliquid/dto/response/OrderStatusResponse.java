@@ -7,6 +7,7 @@ import trade.wayruha.hyperliquid.dto.OrderSide;
 import trade.wayruha.hyperliquid.dto.OrderStatus;
 import trade.wayruha.hyperliquid.dto.TimeInForceType;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -23,21 +24,21 @@ public class OrderStatusResponse {
     private String coin;
     private OrderSide side;
     @JsonProperty("limitPx")
-    private String limitPrice;
+    private BigDecimal limitPrice;
     @JsonProperty("sz")
-    private String size;
+    private BigDecimal size;
     @JsonProperty("oid")
     private long orderId;
     private long timestamp;
     private String triggerCondition;
     private boolean isTrigger;
-    private String triggerPx;
+    private BigDecimal triggerPx;
     private List<OrderDetails> children; //NOTE: unchecked response body
     private boolean isPositionTpsl;
     private boolean reduceOnly;
     private String orderType;
     @JsonProperty("origSz")
-    private String originalSize;
+    private BigDecimal originalSize;
     private TimeInForceType tif;
     @JsonProperty("cloid")
     private String clientOrderId;

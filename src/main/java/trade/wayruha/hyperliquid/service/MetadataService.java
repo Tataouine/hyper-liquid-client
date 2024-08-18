@@ -7,7 +7,7 @@ import trade.wayruha.hyperliquid.HyperLiquidConfig;
 import trade.wayruha.hyperliquid.dto.request.InfoRequestType;
 import trade.wayruha.hyperliquid.dto.request.PublicDataRequest;
 import trade.wayruha.hyperliquid.dto.response.PerpAssetMarketData;
-import trade.wayruha.hyperliquid.dto.response.PerpAssetsMetadata;
+import trade.wayruha.hyperliquid.dto.response.PerpMetadata;
 import trade.wayruha.hyperliquid.service.endpoint.PublicEndpoints;
 
 import java.util.List;
@@ -23,10 +23,16 @@ public class MetadataService extends ServiceBase {
   }
 
   @SneakyThrows
-  public PerpAssetsMetadata getPerpetualsMetadata() {
+  public PerpMetadata getPerpetualsMetadata() {
     final PublicDataRequest meta = PublicDataRequest.metadata(InfoRequestType.META);
     final JsonNode node = client.executeSync(api.getPublicInfo(meta));
-    return getObjectMapper().treeToValue(node, PerpAssetsMetadata.class);
+    final PerpMetadata metadata = getObjectMapper().treeToValue(node, PerpMetadata.class);
+    if (metadata.getAssets() == null) return metadata;
+    //manually set indexes
+    for (int i = 0; i < metadata.getAssets().size(); i++) {
+      metadata.getAssets().get(i).setAssetIndex(i);
+    }
+    return metadata;
   }
 
   @SneakyThrows
@@ -36,6 +42,12 @@ public class MetadataService extends ServiceBase {
     if (!node.isArray()) throw new IllegalArgumentException("Expected array of objects");
 
     final JsonNode assetMarketData = node.get(1);
-    return getObjectMapper().treeToValue(assetMarketData, assetsMarketDataType);
+    final List<PerpAssetMarketData> metadata = getObjectMapper().treeToValue(assetMarketData, assetsMarketDataType);
+    if (metadata == null) return metadata;
+    //manually set indexes
+    for (int i = 0; i < metadata.size(); i++) {
+      metadata.get(i).setAssetIndex(i);
+    }
+    return metadata;
   }
 }

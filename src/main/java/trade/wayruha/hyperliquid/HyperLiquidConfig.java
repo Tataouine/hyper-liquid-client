@@ -4,10 +4,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import static trade.wayruha.hyperliquid.config.Constant.HTTP_CLIENT_TIMEOUT_MS;
 
 @Data
+@NoArgsConstructor
 public class HyperLiquidConfig {
   private String host = "https://api.hyperliquid.xyz/"; // replace with the actual host
   private String webSocketHost = "wss://api.hyperliquid.xyz/ws"; // replace with the actual WebSocket host
