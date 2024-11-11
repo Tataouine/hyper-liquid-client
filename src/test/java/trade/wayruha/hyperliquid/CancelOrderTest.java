@@ -1,6 +1,5 @@
 package trade.wayruha.hyperliquid;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import trade.wayruha.hyperliquid.dto.request.CancelOrderAction;
 import trade.wayruha.hyperliquid.dto.response.CancellationStatus;
 import trade.wayruha.hyperliquid.service.ExchangeService;

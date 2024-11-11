@@ -2,7 +2,6 @@ package trade.wayruha.hyperliquid;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.SneakyThrows;
-import trade.wayruha.hyperliquid.dto.wsrequest.WSMessage;
 import trade.wayruha.hyperliquid.dto.wsresponse.OrderBookUpdate;
 import trade.wayruha.hyperliquid.dto.wsresponse.OrderUpdate;
 import trade.wayruha.hyperliquid.dto.wsresponse.UserEventUpdate;

@@ -51,7 +51,7 @@ public class ApiClient {
         return body;
       }
       String errorMessage = nonNull(response.errorBody()) ? response.errorBody().string() : API_CLIENT_ERROR_MESSAGE_PARSE_EXCEPTION;
-      log.error("Request failed. Request data: {}. Response error message: {} ", rawRequestData, errorMessage);
+      log.error("Request failed. Request data: {}. Response error message: {}. ResponseBody={}", rawRequestData, errorMessage);
       throw new HyperliquidException(response.code() + ": " + errorMessage);
     } catch (IOException e) {
       log.error("Request failed. Request data: {},  response: {} ", rawRequestData, call.request(), e);
