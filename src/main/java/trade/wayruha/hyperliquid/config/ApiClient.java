@@ -2,10 +2,7 @@ package trade.wayruha.hyperliquid.config;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.WebSocket;
-import okhttp3.WebSocketListener;
+import okhttp3.*;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -44,14 +41,16 @@ public class ApiClient {
 
   public <T> T executeSync(Call<T> call) {
     String rawRequestData = call.request().toString();
+    log.debug("[HL] request: {}", rawRequestData);
     try {
       final Response<T> response = call.execute();
       final T body = response.body();
       if (response.isSuccessful()) {
         return body;
       }
-      String errorMessage = nonNull(response.errorBody()) ? response.errorBody().string() : API_CLIENT_ERROR_MESSAGE_PARSE_EXCEPTION;
-      log.error("Request failed. Request data: {}. Response error message: {}. ResponseBody={}", rawRequestData, errorMessage);
+      final ResponseBody errBody = response.errorBody();
+      String errorMessage = nonNull(errBody) ? errBody.string() : API_CLIENT_ERROR_MESSAGE_PARSE_EXCEPTION;
+      log.error("Request failed. Request data: {}. Response error message: {}", rawRequestData, errorMessage);
       throw new HyperliquidException(response.code() + ": " + errorMessage);
     } catch (IOException e) {
       log.error("Request failed. Request data: {},  response: {} ", rawRequestData, call.request(), e);
