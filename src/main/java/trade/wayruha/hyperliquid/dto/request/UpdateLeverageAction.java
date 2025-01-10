@@ -4,10 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
 @JsonPropertyOrder({"type", "asset", "isCross", "leverage"})
 @JsonIncludeProperties({"type", "asset", "isCross", "leverage"})
+@ToString(callSuper = true)
 public class UpdateLeverageAction extends BaseAction {
     private static final String TYPE = "updateLeverage";
     private int asset;

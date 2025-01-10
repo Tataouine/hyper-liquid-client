@@ -41,7 +41,6 @@ public class ApiClient {
 
   public <T> T executeSync(Call<T> call) {
     String rawRequestData = call.request().toString();
-    log.debug("[HL] request: {}", rawRequestData);
     try {
       final Response<T> response = call.execute();
       final T body = response.body();

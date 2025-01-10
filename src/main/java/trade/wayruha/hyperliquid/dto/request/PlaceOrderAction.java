@@ -1,6 +1,7 @@
 package trade.wayruha.hyperliquid.dto.request;
 
 import lombok.Getter;
+import lombok.ToString;
 import trade.wayruha.hyperliquid.dto.OrderSide;
 import trade.wayruha.hyperliquid.dto.TimeInForceType;
 import java.math.BigDecimal;
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@ToString(callSuper = true)
 public class PlaceOrderAction extends BaseAction {
 
   private final List<NewOrderParams> orders;

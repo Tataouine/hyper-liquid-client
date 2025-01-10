@@ -1,11 +1,13 @@
 package trade.wayruha.hyperliquid.dto.request;
 
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@ToString(callSuper = true)
 public class CancelOrderAction extends BaseAction {
   private final List<CancelOrderParams> cancels;
 
