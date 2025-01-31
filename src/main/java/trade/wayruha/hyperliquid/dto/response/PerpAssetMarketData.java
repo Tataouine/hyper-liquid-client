@@ -11,6 +11,7 @@ import java.util.List;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PerpAssetMarketData {
+  private String assetName;
   @JsonIgnore
   private int assetIndex;
   @JsonAlias("dayNtlVlm")

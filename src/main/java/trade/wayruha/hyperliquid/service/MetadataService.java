@@ -41,13 +41,17 @@ public class MetadataService extends ServiceBase {
     final JsonNode node = client.executeSync(api.getPublicInfo(meta));
     if (!node.isArray()) throw new IllegalArgumentException("Expected array of objects");
 
+    final JsonNode assetMetadataJson = node.get(0);
+    final PerpMetadata metadata = getObjectMapper().treeToValue(assetMetadataJson, PerpMetadata.class);
+
     final JsonNode assetMarketData = node.get(1);
-    final List<PerpAssetMarketData> metadata = getObjectMapper().treeToValue(assetMarketData, assetsMarketDataType);
-    if (metadata == null) return metadata;
+    final List<PerpAssetMarketData> marketData = getObjectMapper().treeToValue(assetMarketData, assetsMarketDataType);
+    if (marketData == null) return marketData;
     //manually set indexes
-    for (int i = 0; i < metadata.size(); i++) {
-      metadata.get(i).setAssetIndex(i);
+    for (int i = 0; i < marketData.size(); i++) {
+      marketData.get(i).setAssetName(metadata.getAssets().get(i).getName());
+      marketData.get(i).setAssetIndex(i);
     }
-    return metadata;
+    return marketData;
   }
 }
