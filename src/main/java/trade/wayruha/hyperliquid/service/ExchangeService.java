@@ -32,6 +32,14 @@ public class ExchangeService extends ServiceBase {
 
   @SneakyThrows
   public List<OrderResponseDetails> placeOrder(PlaceOrderAction placeOrderAction) {
+    final ExchangeRequest input = prepareOrderRequest(placeOrderAction);
+    final JsonNode node = client.executeSync(api.postExchange(input));
+
+    final BaseResponse<OrderResponseDetails> response = getObjectMapper().convertValue(node, ORDER_RESPONSE_TYPE);
+    return response.getResponse().getData().getStatuses();
+  }
+
+  public ExchangeRequest prepareOrderRequest(PlaceOrderAction placeOrderAction) throws Exception {
     long nonce = System.currentTimeMillis();
     final LinkedHashMap<String, Object> payloadFieldsMap = getObjectMapper().convertValue(placeOrderAction, LinkedHashMap.class);
     final EthereumSignature ethereumSignature = TransactionSignatureUtil.signStandardL1Action(
@@ -40,10 +48,7 @@ public class ExchangeService extends ServiceBase {
         nonce,
         true);
     final ExchangeRequest input = new ExchangeRequest(placeOrderAction, nonce, ethereumSignature);
-    final JsonNode node = client.executeSync(api.postExchange(input));
-
-    final BaseResponse<OrderResponseDetails> response = getObjectMapper().convertValue(node, ORDER_RESPONSE_TYPE);
-    return response.getResponse().getData().getStatuses();
+    return input;
   }
 
   @SneakyThrows

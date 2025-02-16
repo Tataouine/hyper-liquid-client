@@ -1,5 +1,6 @@
 package trade.wayruha.hyperliquid.websocket;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -87,11 +88,14 @@ public class WebSocketSubscriptionClient<T> extends WebSocketListener {
         log.error("Error connect {}", this.connectionRequest);
       }
     } else {
-      log.warn("{} Already connected to channels {}", logPrefix, this.subscriptions);
+      log.warn("{} Already connected to channels {}. Closing existing connection...", logPrefix, this.subscriptions);
+      this.close();
     }
     this.scheduledPingTask = scheduler.scheduleAtFixedRate(new PingTask(), this.config.getWebSocketPingIntervalSec(), this.config.getWebSocketPingIntervalSec(), TimeUnit.SECONDS);
     reconnectionCounter.set(0); //reset reconnection indexer due to successful connection
-    this.subscribe(subscriptions);
+    if(subscriptions != null) {
+      this.subscribe(subscriptions);
+    }
   }
 
   @SneakyThrows
@@ -112,7 +116,11 @@ public class WebSocketSubscriptionClient<T> extends WebSocketListener {
   public boolean sendRequest(WSMessage request) {
     boolean result = false;
     final String requestStr = objectMapper.writeValueAsString(request);
-    log.debug("{} sending {}", logPrefix, requestStr);
+    if(request.equals(pingRequest)) {
+      log.trace("{} ping... {}", logPrefix, requestStr);
+    } else {
+      log.debug("{} sending {}", logPrefix, requestStr);
+    }
     if (nonNull(webSocket)) {
       result = webSocket.send(requestStr);
     }
@@ -124,7 +132,7 @@ public class WebSocketSubscriptionClient<T> extends WebSocketListener {
   }
 
   public void close() {
-    log.debug("{} Closing WS.", logPrefix);
+    log.info("{} Closing WS.", logPrefix);
     state = WSState.IDLE;
     if (webSocket != null) {
       webSocket.cancel();
@@ -154,7 +162,7 @@ public class WebSocketSubscriptionClient<T> extends WebSocketListener {
         }
       }
     }
-    log.debug("{} Successfully reconnected to WebSocket channels: {}.", logPrefix, cancelledSubscriptions);
+    log.info("{} Successfully reconnected to WebSocket channels: {}.", logPrefix, cancelledSubscriptions);
     cancelledSubscriptions.clear();
     return success;
   }
@@ -179,23 +187,27 @@ public class WebSocketSubscriptionClient<T> extends WebSocketListener {
   public void onMessage(WebSocket webSocket, String text) {
     super.onMessage(webSocket, text);
     lastReceivedTime = System.currentTimeMillis();
-    log.debug("{} onMessage WS event: {}", logPrefix, text);
+    log.trace("{} onMessage WS event: {}", logPrefix, text);
     try {
-      final ObjectNode response = objectMapper.readValue(text, ObjectNode.class);
-      final Optional<String> channel = Optional.ofNullable(response.get("channel"))
-          .map(JsonNode::textValue);
-      if (channel.isPresent()) {
-        if(channel.get().equalsIgnoreCase("pong")) return;
-        if(channel.get().equalsIgnoreCase("subscriptionResponse")) return;
-      }
-
-      final JsonNode dataNode = response.get("data");
-      final T data = objectMapper.convertValue(dataNode, callback.getType());
-      callback.onResponse(data);
+      final T data = parseWsResponse(text);
+      if(data != null) callback.onResponse(data);
     } catch (Exception e) {
       log.error("{} WS message parsing failed. Response: {}", log, text, e);
       closeOnError(e);
     }
+  }
+
+  public T parseWsResponse(String message) throws JsonProcessingException {
+    final ObjectNode response = objectMapper.readValue(message, ObjectNode.class);
+    final Optional<String> channel = Optional.ofNullable(response.get("channel"))
+            .map(JsonNode::textValue);
+    if (channel.isPresent()) {
+      if(channel.get().equalsIgnoreCase("pong")) return null;
+      if(channel.get().equalsIgnoreCase("subscriptionResponse")) return null;
+    }
+
+    final JsonNode dataNode = response.get("data");
+    return objectMapper.convertValue(dataNode, callback.getType());
   }
 
   @Override
@@ -211,16 +223,23 @@ public class WebSocketSubscriptionClient<T> extends WebSocketListener {
     if (state == WSState.CONNECTED || state == WSState.CONNECTING) {
       state = WSState.IDLE;
     }
-    log.debug("{} Closed", logPrefix);
+    log.info("{} Closed", logPrefix);
     callback.onClosed(code, reason);
   }
 
   @SneakyThrows
   @Override
   public void onFailure(WebSocket webSocket, Throwable t, Response response) {
-    if (state == WSState.IDLE || isUselessError(t)) {
+    log.debug("onFailure: {} {}", t.toString(), response, t);
+
+    if (state == WSState.IDLE) {
       return; //this is a handled websocket closure. No failure event should be created.
     }
+    if(isUselessError(t) || isUselessError2(t)) {
+      log.warn("{} Connection useless error. {}", logPrefix, t.getMessage());
+      return;
+    }
+
     log.error("{} WS failed. Response: {}. Trying to reconnect...", logPrefix, extractResponseBody(response), t);
 
     if (!reConnect()) {
@@ -247,6 +266,21 @@ public class WebSocketSubscriptionClient<T> extends WebSocketListener {
     return lastMethodCall.getMethodName().equalsIgnoreCase("socketWrite0") && producingFile.equalsIgnoreCase(lastMethodCall.getFileName())
         && beforeLastMethodCall.getMethodName().equalsIgnoreCase("socketWrite") && producingFile.equalsIgnoreCase(beforeLastMethodCall.getFileName());
   }
+
+  /**
+   * ignore this exception. no idea why it happens, but it seems it does not affect us at all;
+   * This exception does not actually brakes the WS connection
+   */
+  private boolean isUselessError2(Throwable throwable) {
+    if (!(throwable instanceof SocketException)) return false;
+    final EOFException ex = (EOFException) throwable;
+    final StackTraceElement lastMethodCall = ex.getStackTrace()[0];
+    final StackTraceElement beforeLastMethodCall = ex.getStackTrace()[1];
+    final String producingFile = "RealBufferedSource.java";
+    return lastMethodCall.getMethodName().equalsIgnoreCase("require") && producingFile.equalsIgnoreCase(lastMethodCall.getFileName())
+            && beforeLastMethodCall.getMethodName().equalsIgnoreCase("readFully") && producingFile.equalsIgnoreCase(beforeLastMethodCall.getFileName());
+  }
+
 
   static Request buildRequestFromHost(String host) {
     return new Request.Builder().url(host).build();

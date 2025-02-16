@@ -12,4 +12,9 @@ public class WSMessage {
     this.id = null;
     this.method = method;
   }
+
+  public WSMessage(String method, Long id) {
+    this.method = method;
+    this.id = id;
+  }
 }

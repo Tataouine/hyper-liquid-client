@@ -12,7 +12,7 @@ public class Constant {
    * max allowed discrepancy in nonce (i.e., timestamp, millis)
    */
   public static final int DEFAULT_RECEIVING_WINDOW = 60_000;
-  public static final String WEBSOCKET_INTERRUPTED_EXCEPTION = "The server terminated the connection for an unknown reason";
+  public static final String WEBSOCKET_INTERRUPTED_EXCEPTION = "unknown";
   public static final String API_CLIENT_ERROR_MESSAGE_PARSE_EXCEPTION = "Can't parse error message";
   public static final String ORDER_NOT_FOUND_ERROR_MSG = "OrderHistory was not found";
 
