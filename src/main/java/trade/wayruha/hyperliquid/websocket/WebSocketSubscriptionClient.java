@@ -63,6 +63,7 @@ public class WebSocketSubscriptionClient<T> extends WebSocketListener {
 
   public WebSocketSubscriptionClient(ApiClient apiClient, ObjectMapper mapper, WebSocketCallback<T> callback) {
     this(apiClient, mapper, callback, Executors.newSingleThreadScheduledExecutor());
+    this.state = WSState.IDLE;
   }
 
   public WebSocketSubscriptionClient(ApiClient apiClient, ObjectMapper mapper, WebSocketCallback<T> callback,
@@ -81,7 +82,7 @@ public class WebSocketSubscriptionClient<T> extends WebSocketListener {
 
   protected void connect(Set<Subscription> subscriptions) {
     if (this.state != WSState.CONNECTED && this.state != WSState.CONNECTING) {
-      log.debug("{} Connecting to channels {} ...", logPrefix, subscriptions);
+      log.info("{} Connecting to channels {} ...", logPrefix, subscriptions);
       this.state = WSState.CONNECTING;
       this.webSocket = apiClient.createWebSocket(this.connectionRequest, this);
       if (this.webSocket == null) {

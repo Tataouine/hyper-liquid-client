@@ -16,49 +16,52 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class WebSocketClientFactory {
-  private final HyperLiquidConfig config;
-  private final ApiClient apiClient;
-  @Setter
-  private ObjectMapper objectMapper;
+    private final HyperLiquidConfig config;
+    private final ApiClient apiClient;
+    @Setter
+    private ObjectMapper objectMapper;
 
-  public WebSocketClientFactory(HyperLiquidConfig config) {
-    this.apiClient = new ApiClient(config);
-    this.config = config;
-    this.objectMapper = config.getObjectMapper();
-  }
+    public WebSocketClientFactory(HyperLiquidConfig config) {
+        this.apiClient = new ApiClient(config);
+        this.config = config;
+        this.objectMapper = config.getObjectMapper();
+    }
 
-  public <T> WebSocketSubscriptionClient<T> createGenericClient(WebSocketCallback<T> callback) {
-    final WebSocketSubscriptionClient<T> ws = new WebSocketSubscriptionClient<>(apiClient, objectMapper, callback);
-    ws.connect(Set.of());
-    return ws;
-  }
+    public <T> WebSocketSubscriptionClient<T> createGenericClient(WebSocketCallback<T> callback) {
+        final WebSocketSubscriptionClient<T> ws = new WebSocketSubscriptionClient<>(apiClient, objectMapper, callback);
+        ws.connect(Set.of());
+        return ws;
+    }
 
-  //public subscriptions
-  public WebSocketSubscriptionClient<OrderBookUpdate> orderBookSubscription(Collection<String> coins, WebSocketCallback<OrderBookUpdate> callback) {
-    final Set<Subscription> channels = coins.stream().map(Subscription.OrderBook::new).collect(Collectors.toSet());
-    final WebSocketSubscriptionClient<OrderBookUpdate> client = createGenericClient(callback);
-    client.connect(channels);
-    return client;
-  }
+    //public subscriptions
+    public WebSocketSubscriptionClient<OrderBookUpdate> orderBookSubscription(Collection<String> coins, WebSocketCallback<OrderBookUpdate> callback) {
+        final Set<Subscription> channels = coins.stream().map(Subscription.OrderBook::new).collect(Collectors.toSet());
+        final WebSocketSubscriptionClient<OrderBookUpdate> client = new WebSocketSubscriptionClient<>(apiClient, objectMapper, callback);
+        client.connect(channels);
+        return client;
+    }
 
-  public WebSocketSubscriptionClient<List<OrderUpdate>> orderUpdates(String walletAddress, WebSocketCallback<List<OrderUpdate>> callback) {
-    final Subscription.OrderUpdates subscription = new Subscription.OrderUpdates(walletAddress);
-    final WebSocketSubscriptionClient<List<OrderUpdate>> client = createGenericClient(callback);
-    client.connect(Set.of(subscription));
-    return client;
-  }
+    public WebSocketSubscriptionClient<List<OrderUpdate>> orderUpdates(String walletAddress, WebSocketCallback<List<OrderUpdate>> callback) {
+        final Subscription.OrderUpdates subscription = new Subscription.OrderUpdates(walletAddress);
+        final WebSocketSubscriptionClient<List<OrderUpdate>> client = new WebSocketSubscriptionClient<>(apiClient, objectMapper, callback);
+        ;
+        client.connect(Set.of(subscription));
+        return client;
+    }
 
-  public WebSocketSubscriptionClient<UserFillsUpdate> userFills(String walletAddress, WebSocketCallback<UserFillsUpdate> callback) {
-    final Subscription.UserFills subscription = new Subscription.UserFills(walletAddress);
-    final WebSocketSubscriptionClient<UserFillsUpdate> client = createGenericClient(callback);
-    client.connect(Set.of(subscription));
-    return client;
-  }
+    public WebSocketSubscriptionClient<UserFillsUpdate> userFills(String walletAddress, WebSocketCallback<UserFillsUpdate> callback) {
+        final Subscription.UserFills subscription = new Subscription.UserFills(walletAddress);
+        final WebSocketSubscriptionClient<UserFillsUpdate> client = new WebSocketSubscriptionClient<>(apiClient, objectMapper, callback);
+        ;
+        client.connect(Set.of(subscription));
+        return client;
+    }
 
-  public WebSocketSubscriptionClient<UserEventUpdate> userEvents(String walletAddress, WebSocketCallback<UserEventUpdate> callback) {
-    final Subscription.UserEvents subscription = new Subscription.UserEvents(walletAddress);
-    final WebSocketSubscriptionClient<UserEventUpdate> client = createGenericClient(callback);
-    client.connect(Set.of(subscription));
-    return client;
-  }
+    public WebSocketSubscriptionClient<UserEventUpdate> userEvents(String walletAddress, WebSocketCallback<UserEventUpdate> callback) {
+        final Subscription.UserEvents subscription = new Subscription.UserEvents(walletAddress);
+        final WebSocketSubscriptionClient<UserEventUpdate> client = new WebSocketSubscriptionClient<>(apiClient, objectMapper, callback);
+        ;
+        client.connect(Set.of(subscription));
+        return client;
+    }
 }

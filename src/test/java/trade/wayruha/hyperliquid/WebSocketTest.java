@@ -20,10 +20,10 @@ public class WebSocketTest {
 
   @SneakyThrows
   public static void main(String[] args) {
-//    testOrderBookUpdate();
+    testOrderBookUpdate();
 //    testOrderUpdates();
 //    testUserFills();
-    testUserEvents();
+//    testUserEvents();
   }
 
   private static void testOrderBookUpdate() throws InterruptedException {
