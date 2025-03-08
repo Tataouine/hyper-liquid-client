@@ -17,7 +17,7 @@ public class PlaceOrderTest {
     final HyperLiquidConfig config = new HyperLiquidConfig(null, walletPrivateKey);
     final ExchangeService service = new ExchangeService(config);
     final PlaceOrderAction orderAction = new PlaceOrderAction();
-    orderAction.addLimitOrder(1, OrderSide.BID, new BigDecimal(3000), new BigDecimal("0.005"), TimeInForceType.GTC);
+    orderAction.addLimitOrder(1, OrderSide.BID, new BigDecimal(3000), new BigDecimal("0.005"), TimeInForceType.GTC, false);
     List<OrderResponseDetails> resp = service.placeOrder(orderAction);
     System.out.println(resp);
   }

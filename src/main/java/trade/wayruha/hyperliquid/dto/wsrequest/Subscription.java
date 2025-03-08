@@ -53,13 +53,17 @@ public abstract class Subscription {
 
   @Value
   @EqualsAndHashCode(callSuper = true)
-  @ToString(callSuper = true)
   public static class OrderBook extends Subscription {
     String coin;
 
     public OrderBook(String coin) {
       super("l2Book");
       this.coin = coin;
+    }
+
+    @Override
+    public String toString() {
+      return coin;
     }
   }
 

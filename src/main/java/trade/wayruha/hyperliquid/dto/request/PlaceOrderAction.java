@@ -20,9 +20,9 @@ public class PlaceOrderAction extends BaseAction {
     this.orders = new ArrayList<>();
   }
 
-  public void addLimitOrder(int coin, OrderSide orderSide, BigDecimal price, BigDecimal baseQty, TimeInForceType tif) {
+  public void addLimitOrder(int coin, OrderSide orderSide, BigDecimal price, BigDecimal baseQty, TimeInForceType tif, boolean reduceOnly) {
     final OrderType orderType = new OrderType(new OrderType.Limit(tif));
-    orders.add(new NewOrderParams(coin, orderSide, price, baseQty, false, orderType));
+    orders.add(new NewOrderParams(coin, orderSide, price, baseQty, reduceOnly, orderType));
   }
 
   public void addOrder(NewOrderParams o) {

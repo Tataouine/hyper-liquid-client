@@ -27,6 +27,19 @@ public class WebSocketClientFactory {
         this.objectMapper = config.getObjectMapper();
     }
 
+    public AlternativeWSClient<OrderBookUpdate> createAlternativeOrderBookSubscription(Collection<String> coins, WebSocketCallback<OrderBookUpdate> callback) {
+        final Set<Subscription> channels = coins.stream().map(Subscription.OrderBook::new).collect(Collectors.toSet());
+        final AlternativeWSClient<OrderBookUpdate> client = new AlternativeWSClient<>(apiClient, objectMapper, callback);
+        client.connect(channels);
+        return client;
+    }
+
+    public <T> AlternativeWSClient<T> createAlternativeGenericClient(WebSocketCallback<T> callback) {
+        final AlternativeWSClient<T> client = new AlternativeWSClient<>(apiClient, objectMapper, callback);
+        client.connect(Set.of());
+        return client;
+    }
+
     public <T> WebSocketSubscriptionClient<T> createGenericClient(WebSocketCallback<T> callback) {
         final WebSocketSubscriptionClient<T> ws = new WebSocketSubscriptionClient<>(apiClient, objectMapper, callback);
         ws.connect(Set.of());

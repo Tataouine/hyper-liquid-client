@@ -213,7 +213,7 @@ public class WebSocketSubscriptionClient<T> extends WebSocketListener {
 
   @Override
   public void onMessage(WebSocket webSocket, ByteString bytes) {
-    log.debug("onMessage: {} ", bytes.toString());
+    log.trace("onMessage: {} ", bytes.toString());
     super.onMessage(webSocket, bytes);
   }
 
